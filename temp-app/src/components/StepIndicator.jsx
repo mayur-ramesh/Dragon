@@ -12,7 +12,7 @@ export default function StepIndicator({ current, total = 5 }) {
               width: isActive ? 24 : 8,
               height: 8,
               borderRadius: 4,
-              background: isActive ? '#1a1a2e' : isComplete ? '#6aaa7a' : '#d6d3cc',
+              background: isActive ? '#1c0e06' : isComplete ? '#1e8c5c' : '#d8ccba',
               transition: 'all 0.3s ease',
             }}
           />

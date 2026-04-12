@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { matchRole } from '../data/roleData'
 
 const INDUSTRIES = ['Fintech', 'Healthcare', 'Logistics', 'Marketing', 'Education', 'Tech', 'Creative & Media']
 
-// Animated background lines
 function BackgroundLines() {
   const lines = Array.from({ length: 12 }, (_, i) => i)
   return (
@@ -14,38 +13,29 @@ function BackgroundLines() {
           key={i}
           style={{
             position: 'absolute',
-            background: `linear-gradient(90deg, transparent, rgba(26,26,46,0.04), transparent)`,
+            background: `linear-gradient(90deg, transparent, rgba(28,14,6,0.05), transparent)`,
             height: 1,
             width: '60%',
             left: `${(i * 13) % 60}%`,
             top: `${8 + i * 8}%`,
           }}
-          animate={{
-            x: ['-10%', '15%', '-10%'],
-            opacity: [0.4, 0.8, 0.4],
-          }}
-          transition={{
-            duration: 8 + i * 1.3,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: i * 0.6,
-          }}
+          animate={{ x: ['-10%', '15%', '-10%'], opacity: [0.4, 0.9, 0.4] }}
+          transition={{ duration: 8 + i * 1.3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.6 }}
         />
       ))}
-      {/* Subtle circles */}
       {[0,1,2].map((i) => (
         <motion.div
           key={`circle-${i}`}
           style={{
             position: 'absolute',
             borderRadius: '50%',
-            border: '1px solid rgba(26,26,46,0.05)',
+            border: '1px solid rgba(200,136,26,0.08)',
             width: 300 + i * 200,
             height: 300 + i * 200,
             left: `${20 + i * 20}%`,
             top: `${10 + i * 15}%`,
           }}
-          animate={{ scale: [1, 1.04, 1], opacity: [0.4, 0.7, 0.4] }}
+          animate={{ scale: [1, 1.04, 1], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 7 + i * 2, repeat: Infinity, ease: 'easeInOut', delay: i * 1.5 }}
         />
       ))}
@@ -75,7 +65,7 @@ export default function Screen1Onboarding({ onNext }) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#faf9f7',
+      background: '#fdf9f2',
       padding: '40px 24px',
     }}>
       <BackgroundLines />
@@ -90,12 +80,12 @@ export default function Screen1Onboarding({ onNext }) {
         <motion.div variants={stagger} style={{ marginBottom: 48 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 10,
-            background: 'rgba(26,26,46,0.06)', padding: '8px 18px',
-            borderRadius: 100, border: '1px solid rgba(26,26,46,0.1)',
+            background: 'rgba(28,14,6,0.06)', padding: '8px 18px',
+            borderRadius: 100, border: '1px solid rgba(200,136,26,0.2)',
           }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#6aaa7a' }} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#1a1a2e', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-              AI Career Clarity
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#c8881a' }} />
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#1c0e06', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+              Dragon · AI Career Clarity
             </span>
           </div>
         </motion.div>
@@ -108,20 +98,20 @@ export default function Screen1Onboarding({ onNext }) {
             fontSize: 'clamp(32px, 4.5vw, 52px)',
             fontWeight: 400,
             lineHeight: 1.15,
-            color: '#1a1a2e',
+            color: '#1c0e06',
             marginBottom: 20,
             letterSpacing: '-0.5px',
           }}
         >
           AI won't take your job.<br />
-          <em style={{ color: '#d4a843' }}>But it will reshape your Tuesday.</em>
+          <em style={{ color: '#c8881a' }}>But it will reshape your Tuesday.</em>
         </motion.h1>
 
         {/* Subheadline */}
         <motion.p
           variants={stagger}
           style={{
-            fontSize: 17, lineHeight: 1.65, color: '#6b6882', fontWeight: 400,
+            fontSize: 17, lineHeight: 1.65, color: '#6b5f4e', fontWeight: 400,
             marginBottom: 48, maxWidth: 480, margin: '0 auto 48px',
           }}
         >
@@ -131,7 +121,6 @@ export default function Screen1Onboarding({ onNext }) {
         {/* Form */}
         <motion.form variants={stagger} onSubmit={handleSubmit}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 16 }}>
-            {/* Role input */}
             <div style={{ position: 'relative' }}>
               <input
                 type="text"
@@ -146,23 +135,22 @@ export default function Screen1Onboarding({ onNext }) {
                   fontSize: 16,
                   fontFamily: 'Outfit, sans-serif',
                   fontWeight: 400,
-                  border: `1.5px solid ${error ? '#e07060' : focused ? '#1a1a2e' : '#ddd9d1'}`,
+                  border: `1.5px solid ${error ? '#c8341a' : focused ? '#1c0e06' : '#ddd0bc'}`,
                   borderRadius: 12,
                   background: '#fff',
-                  color: '#1a1a2e',
+                  color: '#1c0e06',
                   outline: 'none',
-                  boxShadow: focused ? '0 0 0 4px rgba(26,26,46,0.06)' : 'none',
+                  boxShadow: focused ? '0 0 0 4px rgba(200,136,26,0.1)' : 'none',
                   transition: 'all 0.2s ease',
                 }}
               />
               {error && (
-                <p style={{ position: 'absolute', bottom: -20, left: 4, fontSize: 12, color: '#e07060', fontWeight: 500 }}>
+                <p style={{ position: 'absolute', bottom: -20, left: 4, fontSize: 12, color: '#c8341a', fontWeight: 500 }}>
                   Please enter your job role to continue.
                 </p>
               )}
             </div>
 
-            {/* Industry + Location row */}
             <div style={{ display: 'flex', gap: 12 }}>
               <select
                 value={industry}
@@ -172,14 +160,14 @@ export default function Screen1Onboarding({ onNext }) {
                   padding: '14px 20px',
                   fontSize: 15,
                   fontFamily: 'Outfit, sans-serif',
-                  border: '1.5px solid #ddd9d1',
+                  border: '1.5px solid #ddd0bc',
                   borderRadius: 12,
                   background: '#fff',
-                  color: '#1a1a2e',
+                  color: '#1c0e06',
                   outline: 'none',
                   cursor: 'pointer',
                   appearance: 'none',
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231a1a2e' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231c0e06' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'right 16px center',
                 }}
@@ -187,14 +175,13 @@ export default function Screen1Onboarding({ onNext }) {
                 {INDUSTRIES.map(ind => <option key={ind} value={ind}>{ind}</option>)}
               </select>
 
-              {/* Singapore badge */}
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 padding: '14px 20px',
-                border: '1.5px solid #ddd9d1',
+                border: '1.5px solid #ddd0bc',
                 borderRadius: 12,
-                background: '#f5f3f0',
-                color: '#6b6882',
+                background: '#f5ecd8',
+                color: '#6b5f4e',
                 fontSize: 15,
                 fontWeight: 500,
                 whiteSpace: 'nowrap',
@@ -205,10 +192,9 @@ export default function Screen1Onboarding({ onNext }) {
             </div>
           </div>
 
-          {/* CTA Button */}
           <motion.button
             type="submit"
-            whileHover={{ scale: 1.02, backgroundColor: '#252545' }}
+            whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }}
             whileTap={{ scale: 0.98 }}
             style={{
               width: '100%',
@@ -216,8 +202,8 @@ export default function Screen1Onboarding({ onNext }) {
               fontSize: 16,
               fontFamily: 'Outfit, sans-serif',
               fontWeight: 600,
-              background: '#1a1a2e',
-              color: '#faf9f7',
+              background: '#1c0e06',
+              color: '#fdf9f2',
               border: 'none',
               borderRadius: 12,
               cursor: 'pointer',
@@ -230,9 +216,9 @@ export default function Screen1Onboarding({ onNext }) {
           </motion.button>
         </motion.form>
 
-        {/* Roles hint */}
+        {/* Demo shortcuts */}
         <motion.div variants={stagger} style={{ marginTop: 40 }}>
-          <p style={{ fontSize: 13, color: '#9896a4', marginBottom: 12 }}>
+          <p style={{ fontSize: 13, color: '#9a8b78', marginBottom: 12 }}>
             Try these roles for the demo
           </p>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -245,14 +231,14 @@ export default function Screen1Onboarding({ onNext }) {
                   fontSize: 13,
                   fontFamily: 'Outfit, sans-serif',
                   background: 'transparent',
-                  border: '1px solid #ddd9d1',
+                  border: '1px solid #ddd0bc',
                   borderRadius: 100,
-                  color: '#6b6882',
+                  color: '#6b5f4e',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}
-                onMouseEnter={e => { e.target.style.borderColor = '#1a1a2e'; e.target.style.color = '#1a1a2e' }}
-                onMouseLeave={e => { e.target.style.borderColor = '#ddd9d1'; e.target.style.color = '#6b6882' }}
+                onMouseEnter={e => { e.target.style.borderColor = '#c8881a'; e.target.style.color = '#1c0e06' }}
+                onMouseLeave={e => { e.target.style.borderColor = '#ddd0bc'; e.target.style.color = '#6b5f4e' }}
               >
                 {r}
               </button>

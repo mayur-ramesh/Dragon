@@ -1,7 +1,7 @@
 const badgeStyles = {
-  daily: { background: 'rgba(212,168,67,0.15)', color: '#a07c1a', border: '1px solid rgba(212,168,67,0.3)' },
-  weekly: { background: 'rgba(106,170,122,0.15)', color: '#3a7a4a', border: '1px solid rgba(106,170,122,0.3)' },
-  rarely: { background: 'rgba(158,155,170,0.15)', color: '#5a5768', border: '1px solid rgba(158,155,170,0.3)' },
+  daily:  { background: 'rgba(200,136,26,0.14)', color: '#8a6010', border: '1px solid rgba(200,136,26,0.3)' },
+  weekly: { background: 'rgba(30,140,92,0.12)',  color: '#156e46', border: '1px solid rgba(30,140,92,0.28)' },
+  rarely: { background: 'rgba(140,120,100,0.12)', color: '#5a4e40', border: '1px solid rgba(140,120,100,0.25)' },
 }
 
 export default function FrequencyBadge({ frequency }) {
