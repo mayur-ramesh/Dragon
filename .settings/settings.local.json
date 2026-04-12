@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(cp -r temp-app/. .)",
+      "Bash(rm -rf temp-app)"
+    ]
+  }
+}
