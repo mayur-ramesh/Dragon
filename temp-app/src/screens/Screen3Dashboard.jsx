@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
-import { roles } from '../data/roleData'
+import { roles, classifyCustomTask, CUSTOM_TASK_DETAILS } from '../data/roleData'
 import StepIndicator from '../components/StepIndicator'
 import FrequencyBadge from '../components/FrequencyBadge'
 

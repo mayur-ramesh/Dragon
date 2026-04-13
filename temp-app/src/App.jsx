@@ -17,6 +17,7 @@ export default function App() {
   const [screen, setScreen] = useState(1)
   const [roleKey, setRoleKey] = useState(null)
   const [taskFrequencies, setTaskFrequencies] = useState({})
+  const [customTasks, setCustomTasks] = useState([])
   const [sliderYear, setSliderYear] = useState(1)
 
   return (
@@ -31,7 +32,7 @@ export default function App() {
           <motion.div key="s2" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition}>
             <Screen2MapWeek
               roleKey={roleKey}
-              onNext={(freqs) => { setTaskFrequencies(freqs); setScreen(3) }}
+              onNext={({ frequencies, customTasks: ct }) => { setTaskFrequencies(frequencies); setCustomTasks(ct); setScreen(3) }}
               onBack={() => setScreen(1)}
             />
           </motion.div>
@@ -41,6 +42,7 @@ export default function App() {
             <Screen3Dashboard
               roleKey={roleKey}
               taskFrequencies={taskFrequencies}
+              customTasks={customTasks}
               sliderYear={sliderYear}
               setSliderYear={setSliderYear}
               onNext={() => setScreen(4)}
@@ -63,7 +65,7 @@ export default function App() {
             <Screen5Summary
               roleKey={roleKey}
               taskFrequencies={taskFrequencies}
-              onRestart={() => { setScreen(1); setRoleKey(null); setTaskFrequencies({}); setSliderYear(1) }}
+              onRestart={() => { setScreen(1); setRoleKey(null); setTaskFrequencies({}); setCustomTasks([]); setSliderYear(1) }}
               onBack={() => setScreen(4)}
             />
           </motion.div>

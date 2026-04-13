@@ -414,6 +414,110 @@ export const roles = {
     clarityScore: 68,
     summaryInsight: "5 of your daily tasks are being automated within 2 years — but the coordinators who master exception handling and vendor relationships will be promoted, not replaced.",
   },
+
+  "university-professor": {
+    title: "University Professor",
+    industry: "Education",
+    taskPool: [
+      { id: "up-1", name: "Grading & marking", defaultFrequency: "daily" },
+      { id: "up-2", name: "Lecture preparation", defaultFrequency: "weekly" },
+      { id: "up-3", name: "Student advising & office hours", defaultFrequency: "weekly" },
+      { id: "up-4", name: "Research writing", defaultFrequency: "weekly" },
+      { id: "up-5", name: "Literature review", defaultFrequency: "weekly" },
+      { id: "up-6", name: "Administrative emails", defaultFrequency: "daily" },
+      { id: "up-7", name: "Committee & admin duties", defaultFrequency: "weekly" },
+      { id: "up-8", name: "Curriculum & course design", defaultFrequency: "rarely" },
+      { id: "up-9", name: "Grant writing", defaultFrequency: "rarely" },
+      { id: "up-10", name: "Peer review of papers", defaultFrequency: "rarely" },
+      { id: "up-11", name: "Student project supervision", defaultFrequency: "weekly" },
+      { id: "up-12", name: "Conference presentations", defaultFrequency: "rarely" },
+    ],
+    aiAnalysis: {
+      year1: {
+        automatable: [
+          { id: "up-6", detail: "AI drafts and categorises routine emails — follow-ups, scheduling, and standard student queries handled automatically" },
+          { id: "up-5", detail: "AI tools scan databases, surface relevant papers, and generate annotated summaries in minutes" },
+        ],
+        augmented: [
+          { id: "up-1", detail: "AI grades structured work (MCQ, short answer) and flags anomalies, but nuanced feedback on essays and projects remains human" },
+          { id: "up-2", detail: "AI generates lecture outlines and slide drafts, but pedagogical sequencing and deep explanation are yours" },
+          { id: "up-7", detail: "AI summarises meeting notes and tracks action items, but committee judgment and institutional knowledge are human" },
+          { id: "up-8", detail: "AI suggests learning outcomes and module structures from syllabi data, humans design the intellectual arc" },
+          { id: "up-10", detail: "AI does initial desk-review screening and similarity checks, but expert evaluation of contribution and rigour is human" },
+          { id: "up-4", detail: "AI assists with drafting sections and checking citations, but the intellectual argument is entirely yours" },
+        ],
+        human: [
+          { id: "up-3", detail: "Student advising requires understanding the whole person — academic, personal, and professional — which no AI can replicate" },
+          { id: "up-11", detail: "Shaping a student's research direction, providing critical feedback, and building their academic identity is deeply human" },
+          { id: "up-9", detail: "Grant strategy requires reading funding landscapes, building relationships with panels, and crafting a compelling vision" },
+          { id: "up-12", detail: "A keynote or invited talk carries your intellectual reputation and scholarly voice — authentically human" },
+        ],
+      },
+      year5: {
+        automatable: [
+          { id: "up-6", detail: "Routine correspondence fully automated with near-zero manual input required" },
+          { id: "up-5", detail: "AI delivers real-time, synthesised literature maps with gap analysis and citation networks" },
+          { id: "up-1", detail: "AI handles structured grading end-to-end; professors focus only on complex written work and oral defences" },
+          { id: "up-7", detail: "Routine admin and meeting management fully handled by AI assistants" },
+        ],
+        augmented: [
+          { id: "up-2", detail: "AI generates and personalises lecture content per student cohort; professors direct learning strategy and run discussions" },
+          { id: "up-4", detail: "AI co-writes first drafts at near-publishable quality; professors contribute original ideas, critique, and final voice" },
+          { id: "up-8", detail: "AI designs complete course modules from learning objectives; professors evaluate, iterate, and infuse disciplinary identity" },
+          { id: "up-10", detail: "AI does detailed initial review; human reviewers focus on evaluating novelty and field impact" },
+        ],
+        human: [
+          { id: "up-3", detail: "Mentoring and personal advising become even more critical as students navigate an AI-saturated world — the human guide is irreplaceable" },
+          { id: "up-11", detail: "Research supervision — teaching intellectual courage, research ethics, and original thinking — becomes the highest-leverage professor activity" },
+          { id: "up-9", detail: "Grant leadership and building collaborative research agendas remain fundamentally human and relationship-driven" },
+          { id: "up-12", detail: "Thought leadership, keynotes, and scholarly debate are the professional signature only you can carry" },
+        ],
+      },
+    },
+    moves: [
+      {
+        number: "01",
+        title: "Become the mentor your students can't get from any AI",
+        why: "As AI handles marking and literature search, the professor who invests deeply in 'Student advising & office hours' and 'Student project supervision' becomes the most sought-after in any department. Human guidance through confusion, failure, and academic identity is irreplaceable — and increasingly rare.",
+        linkedTaskId: "up-3",
+        linkedTaskName: "Student advising & office hours",
+        course: {
+          name: "Coaching & Mentoring in Higher Education",
+          provider: "NUS Teaching Academy",
+          duration: "6 weeks · Part-time",
+          skillsFuture: true,
+        },
+      },
+      {
+        number: "02",
+        title: "Shift from writing research to directing it",
+        why: "AI will draft your sections and check citations — but it cannot formulate the question, challenge the paradigm, or argue the significance. Position yourself as the intellectual engine behind 'Research writing' and 'Grant writing'. Your value lies in originating ideas, not executing them.",
+        linkedTaskId: "up-4",
+        linkedTaskName: "Research writing",
+        course: {
+          name: "AI Tools for Academic Research & Writing",
+          provider: "NUS Libraries · Digital Research Skills",
+          duration: "4 weeks · Online",
+          skillsFuture: true,
+        },
+      },
+      {
+        number: "03",
+        title: "Design learning experiences AI cannot replicate",
+        why: "As AI generates lecture slides and course outlines, 'Curriculum & course design' becomes a higher-order skill — about sequencing ideas, creating intellectual challenge, and building a learning journey. The professors who master this become curriculum architects for their entire institution.",
+        linkedTaskId: "up-8",
+        linkedTaskName: "Curriculum & course design",
+        course: {
+          name: "Learning Design for the AI Era",
+          provider: "Singapore Institute of Technology",
+          duration: "5 weeks · Part-time",
+          skillsFuture: true,
+        },
+      },
+    ],
+    clarityScore: 74,
+    summaryInsight: "4 of your most frequent tasks will be substantially augmented — but your role as intellectual guide, mentor, and research director becomes more vital, not less.",
+  },
 };
 
 export const roleKeywords = {
@@ -437,6 +541,14 @@ export const roleKeywords = {
   "supply chain": "logistics-coordinator",
   "operations": "logistics-coordinator",
   "shipping": "logistics-coordinator",
+  "professor": "university-professor",
+  "lecturer": "university-professor",
+  "academic": "university-professor",
+  "faculty": "university-professor",
+  "university": "university-professor",
+  "researcher": "university-professor",
+  "phd": "university-professor",
+  "teaching": "university-professor",
 };
 
 export function matchRole(input) {
@@ -445,4 +557,44 @@ export function matchRole(input) {
     if (lower.includes(keyword)) return roleKey;
   }
   return "junior-financial-analyst";
+}
+
+const AUTOMATABLE_TERMS = [
+  'schedul', 'calendar', 'booking', 'remind',
+  'attendance', 'data entry', 'data input',
+  'transcri', 'format report', 'generate report',
+  'invoice', 'billing', 'payroll',
+  'filing', 'document management',
+  'routine email', 'auto-reply', 'template',
+  'notification', 'alert', 'log ',
+]
+
+const HUMAN_TERMS = [
+  'mentor', 'advis', 'counsel', 'coaching', 'coach ',
+  'facilitate', 'facilitat',
+  'supervise', 'supervision',
+  'welfare', 'ethic',
+  'inspire', 'motivat', 'leadership',
+  'negotiat', 'relationship', 'trust',
+  'community', 'emotional', 'empathy',
+  'judgment', 'advocacy',
+  'keynote', 'strategic vision',
+  'culture',
+]
+
+export function classifyCustomTask(taskName) {
+  const lower = taskName.toLowerCase()
+  for (const term of AUTOMATABLE_TERMS) {
+    if (lower.includes(term)) return 'automatable'
+  }
+  for (const term of HUMAN_TERMS) {
+    if (lower.includes(term)) return 'human'
+  }
+  return 'augmented'
+}
+
+export const CUSTOM_TASK_DETAILS = {
+  automatable: "This task involves predictable, rule-based steps — expect AI to handle most of it within 1–2 years.",
+  augmented: "AI can do the heavy lifting here, but your expertise and judgment are needed to shape and apply the output.",
+  human: "This task relies on relationships, empathy, or contextual wisdom that AI cannot replicate — a core part of your value.",
 }

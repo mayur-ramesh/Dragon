@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   DndContext, DragOverlay, useDraggable, useDroppable,
@@ -111,13 +111,18 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
   const tasks = roleData.taskPool
   const [frequencies, setFrequencies] = useState({})
   const [activeId, setActiveId] = useState(null)
+  const [customTasks, setCustomTasks] = useState([])
+  const [newTaskInput, setNewTaskInput] = useState('')
+  const [inputFocused, setInputFocused] = useState(false)
+  const customCounter = useRef(0)
 
+  const allTasks = [...tasks, ...customTasks]
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
-  const unsortedTasks = tasks.filter(t => !frequencies[t.id])
+  const unsortedTasks = allTasks.filter(t => !frequencies[t.id])
   const sortedCount = Object.keys(frequencies).length
   const minRequired = 8
   const canProceed = sortedCount >= minRequired
-  const activeTask = tasks.find(t => t.id === activeId)
+  const activeTask = allTasks.find(t => t.id === activeId)
 
   function handleDragStart(e) { setActiveId(e.active.id) }
   function handleDragEnd(e) {
@@ -128,8 +133,21 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
     if (zoneId) setFrequencies(prev => ({ ...prev, [active.id]: zoneId }))
   }
 
+  function addCustomTask() {
+    const name = newTaskInput.trim()
+    if (!name) return
+    customCounter.current += 1
+    const newTask = { id: `custom-${customCounter.current}`, name, defaultFrequency: 'weekly' }
+    setCustomTasks(prev => [...prev, newTask])
+    setNewTaskInput('')
+  }
+
+  function handleInputKeyDown(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addCustomTask() }
+  }
+
   function quickFill() {
-    const entries = tasks.filter(t => !frequencies[t.id])
+    const entries = allTasks.filter(t => !frequencies[t.id])
     entries.forEach((t, i) => {
       setTimeout(() => setFrequencies(prev => ({ ...prev, [t.id]: t.defaultFrequency })), i * 120)
     })
@@ -138,7 +156,7 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
   function demoMode() {
     setFrequencies({})
     setTimeout(() => {
-      tasks.forEach((t, i) => {
+      allTasks.forEach((t, i) => {
         setTimeout(() => setFrequencies(prev => ({ ...prev, [t.id]: t.defaultFrequency })), i * 160)
       })
     }, 100)
@@ -146,8 +164,8 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
 
   function handleProceed() {
     const allFreqs = {}
-    tasks.forEach(t => { allFreqs[t.id] = frequencies[t.id] || t.defaultFrequency })
-    onNext(allFreqs)
+    allTasks.forEach(t => { allFreqs[t.id] = frequencies[t.id] || t.defaultFrequency })
+    onNext({ frequencies: allFreqs, customTasks })
   }
 
   return (
@@ -220,7 +238,7 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
           {unsortedTasks.length > 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{
               background: '#fff', border: '1.5px solid #ede0cc',
-              borderRadius: 16, padding: '20px 24px', marginBottom: 24,
+              borderRadius: 16, padding: '20px 24px', marginBottom: 16,
             }}>
               <p style={{ fontSize: 12, fontWeight: 700, color: '#9a8b78', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
                 Unsorted — drag into a column
@@ -231,9 +249,64 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
             </motion.div>
           )}
 
+          {/* Add your own task */}
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            style={{
+              background: '#fdf9f2', border: '1.5px dashed #ddd0bc',
+              borderRadius: 16, padding: '16px 24px', marginBottom: 24,
+              display: 'flex', alignItems: 'center', gap: 12,
+            }}
+          >
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#9a8b78', whiteSpace: 'nowrap' }}>
+              + Add task
+            </span>
+            <input
+              type="text"
+              value={newTaskInput}
+              onChange={e => setNewTaskInput(e.target.value)}
+              onKeyDown={handleInputKeyDown}
+              onFocus={() => setInputFocused(true)}
+              onBlur={() => setInputFocused(false)}
+              placeholder="Type a task you actually do, e.g. 'Write exam questions'"
+              style={{
+                flex: 1,
+                padding: '10px 16px',
+                fontSize: 14,
+                fontFamily: 'Outfit, sans-serif',
+                border: `1.5px solid ${inputFocused ? '#1c0e06' : '#ddd0bc'}`,
+                borderRadius: 10,
+                background: '#fff',
+                color: '#1c0e06',
+                outline: 'none',
+                boxShadow: inputFocused ? '0 0 0 3px rgba(200,136,26,0.1)' : 'none',
+                transition: 'all 0.2s ease',
+              }}
+            />
+            <button
+              onClick={addCustomTask}
+              disabled={!newTaskInput.trim()}
+              style={{
+                padding: '10px 18px',
+                fontSize: 14,
+                fontFamily: 'Outfit, sans-serif',
+                fontWeight: 600,
+                background: newTaskInput.trim() ? '#1c0e06' : '#ede0cc',
+                color: newTaskInput.trim() ? '#fdf9f2' : '#bfb09c',
+                border: 'none',
+                borderRadius: 10,
+                cursor: newTaskInput.trim() ? 'pointer' : 'not-allowed',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Add ↵
+            </button>
+          </motion.div>
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 28 }}>
             {ZONES.map(zone => (
-              <DropZone key={zone.id} zone={zone} tasks={tasks} frequencies={frequencies} />
+              <DropZone key={zone.id} zone={zone} tasks={allTasks} frequencies={frequencies} />
             ))}
           </div>
 
