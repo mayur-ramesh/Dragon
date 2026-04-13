@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return isMobile
+}
 import { roles, classifyCustomTask, CUSTOM_TASK_DETAILS } from '../data/roleData'
 import StepIndicator from '../components/StepIndicator'
 import FrequencyBadge from '../components/FrequencyBadge'
@@ -185,6 +195,7 @@ function DonutChart({ data, size = 120 }) {
 
 export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear, setSliderYear, onNext, onBack }) {
   const [loading, setLoading] = useState(true)
+  const isMobile = useIsMobile()
   const roleData = roles[roleKey]
   const analysisKey = sliderYear <= 2 ? 'year1' : 'year5'
   const analysis = roleData.aiAnalysis[analysisKey]
@@ -206,9 +217,9 @@ export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear,
   if (loading) return <LoadingScreen onDone={() => setLoading(false)} />
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: '24px 32px 60px' }}>
+    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: isMobile ? '16px 14px 60px' : '24px 32px 60px' }}>
       {/* Top nav */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1280, margin: '0 auto 28px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1280, margin: isMobile ? '0 auto 16px' : '0 auto 28px', flexWrap: 'wrap', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={onBack} style={{
             background: 'transparent', border: '1.5px solid #e0d4c0', borderRadius: 10,
@@ -244,21 +255,23 @@ export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear,
         {/* Timeline Slider */}
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          style={{ background: '#fff', border: '1px solid #ede0cc', borderRadius: 16, padding: '24px 32px', marginBottom: 28 }}
+          style={{ background: '#fff', border: '1px solid #ede0cc', borderRadius: 16, padding: isMobile ? '16px 14px' : '24px 32px', marginBottom: 28 }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1c0e06', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16, alignItems: 'center', gap: 12 }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#1c0e06', textTransform: 'uppercase', letterSpacing: '0.06em', flexShrink: 0 }}>
               Timeline
             </span>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={insightKey}
-                initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-                style={{ fontSize: 14, color: '#6b5f4e', fontStyle: 'italic' }}
-              >
-                "{INSIGHTS[insightKey]}"
-              </motion.span>
-            </AnimatePresence>
+            {!isMobile && (
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={insightKey}
+                  initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+                  style={{ fontSize: 14, color: '#6b5f4e', fontStyle: 'italic', textAlign: 'right' }}
+                >
+                  "{INSIGHTS[insightKey]}"
+                </motion.span>
+              </AnimatePresence>
+            )}
           </div>
           <div style={{ position: 'relative', padding: '4px 0' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -314,7 +327,7 @@ export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear,
 
         {/* Three columns */}
         <LayoutGroup>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 12 : 20, marginBottom: 28 }}>
             {COLUMNS.map((col, ci) => {
               const colTasks = getColumnTasks(col.id)
               return (
@@ -362,7 +375,10 @@ export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear,
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
           style={{
             background: '#fff', border: '1px solid #ede0cc', borderRadius: 16,
-            padding: '24px 32px', display: 'flex', alignItems: 'center', gap: 40, marginBottom: 28,
+            padding: isMobile ? '20px 16px' : '24px 32px',
+            display: 'flex', alignItems: isMobile ? 'flex-start' : 'center',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? 16 : 40, marginBottom: 28,
           }}
         >
           <DonutChart data={donutData} size={110} />
@@ -392,15 +408,22 @@ export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear,
         </motion.div>
 
         <div style={{ textAlign: 'right' }}>
-          <motion.button onClick={onNext}
-            whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }} whileTap={{ scale: 0.98 }}
-            style={{
-              padding: '14px 32px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
-              background: '#1c0e06', color: '#fdf9f2', border: 'none', borderRadius: 12,
-              cursor: 'pointer', letterSpacing: '0.01em',
-            }}>
-            See my AI-proof moves →
-          </motion.button>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <motion.div
+              style={{ position: 'absolute', inset: -1, borderRadius: 13, pointerEvents: 'none' }}
+              animate={{ boxShadow: ['0 0 0 0 rgba(200,136,26,0)', '0 0 22px 5px rgba(200,136,26,0.28)', '0 0 0 0 rgba(200,136,26,0)'] }}
+              transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 0.8 }}
+            />
+            <motion.button onClick={onNext}
+              whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }} whileTap={{ scale: 0.98 }}
+              style={{
+                padding: '14px 32px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
+                background: '#1c0e06', color: '#fdf9f2', border: 'none', borderRadius: 12,
+                cursor: 'pointer', letterSpacing: '0.01em', position: 'relative',
+              }}>
+              See my AI-proof moves →
+            </motion.button>
+          </div>
         </div>
       </div>
     </div>

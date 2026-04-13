@@ -3,6 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { roles } from '../data/roleData'
 import StepIndicator from '../components/StepIndicator'
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return isMobile
+}
+
 function useCountUp(target, duration = 1500) {
   const [count, setCount] = useState(0)
   useEffect(() => {
@@ -77,9 +87,24 @@ function MiniDonut({ data, size = 80 }) {
   )
 }
 
+function StatCard({ stat, index, isMobile }) {
+  const animatedValue = useCountUp(stat.value, 1200)
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5 + index * 0.12 }}
+      style={{ background: `${stat.color}08`, border: `1px solid ${stat.color}25`, borderRadius: 12, padding: isMobile ? '14px 12px' : '16px 20px', textAlign: 'center' }}
+    >
+      <div style={{ fontSize: isMobile ? 30 : 36, fontWeight: 700, color: stat.color, lineHeight: 1, marginBottom: 6 }}>{animatedValue}</div>
+      <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 600, color: '#1c0e06', marginBottom: 3 }}>{stat.label}</div>
+      <div style={{ fontSize: 11, color: '#9a8b78' }}>{stat.sub}</div>
+    </motion.div>
+  )
+}
+
 export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, onBack }) {
   const roleData = roles[roleKey]
   const [toastVisible, setToastVisible] = useState(false)
+  const isMobile = useIsMobile()
 
   const year1 = roleData.aiAnalysis.year1
   const automatableCount = year1.automatable.length
@@ -101,8 +126,8 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: '24px 32px 60px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: '0 auto 32px' }}>
+    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: isMobile ? '16px 14px 60px' : '24px 32px 60px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 900, margin: isMobile ? '0 auto 20px' : '0 auto 32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={onBack} style={{
             background: 'transparent', border: '1.5px solid #e0d4c0', borderRadius: 10,
@@ -120,12 +145,12 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           style={{
             background: '#fff', border: '1.5px solid #ede0cc',
-            borderRadius: 24, padding: '48px', marginBottom: 24,
+            borderRadius: 24, padding: isMobile ? '28px 20px' : '48px', marginBottom: 24,
             boxShadow: '0 4px 40px rgba(28,14,6,0.07)',
           }}
         >
           {/* Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40, flexWrap: 'wrap', gap: 20 }}>
+          <div style={{ display: 'flex', justifyContent: isMobile ? 'center' : 'space-between', alignItems: isMobile ? 'center' : 'flex-start', marginBottom: 40, flexWrap: 'wrap', gap: 20, flexDirection: isMobile ? 'column-reverse' : 'row' }}>
             <div>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -157,7 +182,7 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
           </motion.div>
 
           {/* Two columns */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 32, marginBottom: 40 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.6fr', gap: isMobile ? 16 : 32, marginBottom: 40 }}>
             <div style={{ background: '#f8f2e8', borderRadius: 16, padding: 24 }}>
               <h4 style={{ fontSize: 12, fontWeight: 700, color: '#9a8b78', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}>
                 Your week at a glance
@@ -205,32 +230,31 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
           </div>
 
           {/* Key stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 12 }}>
             {[
-              { value: `${humanCount}`,      label: 'Highly Human tasks',    sub: 'Irreplaceable right now',     color: '#1e8c5c' },
-              { value: `${augmentedCount}`,  label: 'Tasks being augmented', sub: 'AI assists, you lead',        color: '#c8881a' },
-              { value: `${dailyAugmented}`,  label: 'Daily tasks evolving',  sub: 'Not disappearing — shifting', color: '#1c0e06' },
+              { value: humanCount,      label: 'Highly Human tasks',    sub: 'Irreplaceable right now',     color: '#1e8c5c' },
+              { value: augmentedCount,  label: 'Tasks being augmented', sub: 'AI assists, you lead',        color: '#c8881a' },
+              { value: dailyAugmented,  label: 'Daily tasks evolving',  sub: 'Not disappearing — shifting', color: '#1c0e06' },
             ].map((stat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + i * 0.1 }}
-                style={{ background: `${stat.color}08`, border: `1px solid ${stat.color}25`, borderRadius: 12, padding: '16px 20px', textAlign: 'center' }}
-              >
-                <div style={{ fontSize: 36, fontWeight: 700, color: stat.color, lineHeight: 1, marginBottom: 6 }}>{stat.value}</div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#1c0e06', marginBottom: 3 }}>{stat.label}</div>
-                <div style={{ fontSize: 12, color: '#9a8b78' }}>{stat.sub}</div>
-              </motion.div>
+              <StatCard key={i} stat={stat} index={i} isMobile={isMobile} />
             ))}
           </div>
         </motion.div>
 
         {/* Action buttons */}
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 24 }}>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative' }}>
+            <motion.div
+              style={{ position: 'absolute', inset: -1, borderRadius: 13, pointerEvents: 'none' }}
+              animate={{ boxShadow: ['0 0 0 0 rgba(200,136,26,0)', '0 0 22px 5px rgba(200,136,26,0.28)', '0 0 0 0 rgba(200,136,26,0)'] }}
+              transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 0.8 }}
+            />
           <motion.button onClick={handleShare}
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
             style={{
               padding: '14px 28px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
               background: '#1c0e06', color: '#fdf9f2', border: 'none', borderRadius: 12,
-              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, position: 'relative',
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -239,6 +263,7 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
             </svg>
             Share my results
           </motion.button>
+          </div>
 
           <motion.button onClick={onRestart}
             whileHover={{ scale: 1.02, borderColor: '#1c0e06', color: '#1c0e06' }} whileTap={{ scale: 0.98 }}

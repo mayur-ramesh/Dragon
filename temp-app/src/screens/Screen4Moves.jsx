@@ -1,6 +1,17 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { roles } from '../data/roleData'
 import StepIndicator from '../components/StepIndicator'
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return isMobile
+}
 
 const TIMELINE_PHASES = [
   { range: 'Month 1–3', label: 'Foundation moves',      moveIndex: 0, color: '#1e8c5c' },
@@ -8,7 +19,7 @@ const TIMELINE_PHASES = [
   { range: 'Month 7–12', label: 'Position for the shift', moveIndex: 2, color: '#c8341a' },
 ]
 
-function MoveCard({ move, taskFrequencies, allTasks, index }) {
+function MoveCard({ move, taskFrequencies, allTasks, index, isMobile }) {
   const linkedTask = allTasks.find(t => t.id === move.linkedTaskId)
   const freq = taskFrequencies[move.linkedTaskId]
 
@@ -26,7 +37,7 @@ function MoveCard({ move, taskFrequencies, allTasks, index }) {
     <motion.div
       initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 + index * 0.15, duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
-      style={{ background: '#fff', border: `1.5px solid ${border}`, borderRadius: 20, padding: 32, position: 'relative', overflow: 'hidden' }}
+      style={{ background: '#fff', border: `1.5px solid ${border}`, borderRadius: 20, padding: isMobile ? 20 : 32, position: 'relative', overflow: 'hidden' }}
     >
       {/* Accent stripe */}
       <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 5, background: accent, borderRadius: '20px 0 0 20px' }} />
@@ -75,7 +86,7 @@ function MoveCard({ move, taskFrequencies, allTasks, index }) {
       )}
 
       <div style={{ background: '#f8f2e8', border: '1px solid #ede0cc', borderRadius: 14, padding: '16px 20px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexDirection: isMobile ? 'column' : 'row' }}>
           <div>
             <p style={{ fontSize: 12, fontWeight: 700, color: '#9a8b78', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
               Supporting skill-up
@@ -110,10 +121,11 @@ function MoveCard({ move, taskFrequencies, allTasks, index }) {
 
 export default function Screen4Moves({ roleKey, taskFrequencies, onNext, onBack }) {
   const roleData = roles[roleKey]
+  const isMobile = useIsMobile()
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: '24px 32px 60px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1100, margin: '0 auto 28px' }}>
+    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: isMobile ? '16px 14px 60px' : '24px 32px 60px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1100, margin: isMobile ? '0 auto 16px' : '0 auto 28px', flexWrap: 'wrap', gap: 8 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <button onClick={onBack} style={{
             background: 'transparent', border: '1.5px solid #e0d4c0', borderRadius: 10,
@@ -148,54 +160,72 @@ export default function Screen4Moves({ roleKey, taskFrequencies, onNext, onBack 
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginBottom: 48 }}>
           {roleData.moves.map((move, i) => (
-            <MoveCard key={move.number} move={move} taskFrequencies={taskFrequencies} allTasks={roleData.taskPool} index={i} />
+            <MoveCard key={move.number} move={move} taskFrequencies={taskFrequencies} allTasks={roleData.taskPool} index={i} isMobile={isMobile} />
           ))}
         </div>
 
         {/* 12-month timeline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
-          style={{ background: '#fff', border: '1px solid #ede0cc', borderRadius: 20, padding: '28px 32px', marginBottom: 36 }}
+          style={{ background: '#fff', border: '1px solid #ede0cc', borderRadius: 20, padding: isMobile ? '20px 16px' : '28px 32px', marginBottom: 36 }}
         >
           <h4 style={{ fontSize: 13, fontWeight: 700, color: '#9a8b78', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 24 }}>
             Your 12-Month Roadmap
           </h4>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 0, position: 'relative' }}>
-            <div style={{
-              position: 'absolute', top: 16, left: '16.67%', right: '16.67%',
-              height: 2, background: 'linear-gradient(90deg, #1e8c5c, #c8881a, #c8341a)', zIndex: 0,
-            }} />
+          <div style={isMobile ? { display: 'flex', flexDirection: 'column', gap: 0, position: 'relative' } : { display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 0, position: 'relative' }}>
+            {!isMobile && (
+              <div style={{
+                position: 'absolute', top: 16, left: '16.67%', right: '16.67%',
+                height: 2, background: 'linear-gradient(90deg, #1e8c5c, #c8881a, #c8341a)', zIndex: 0,
+              }} />
+            )}
+            {isMobile && (
+              <div style={{
+                position: 'absolute', left: 15, top: '16px', bottom: '16px',
+                width: 2, background: 'linear-gradient(180deg, #1e8c5c, #c8881a, #c8341a)', zIndex: 0,
+              }} />
+            )}
             {TIMELINE_PHASES.map((phase, i) => (
-              <div key={i} style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+              <div key={i} style={isMobile ? { display: 'flex', alignItems: 'flex-start', gap: 16, position: 'relative', zIndex: 1, paddingBottom: i < 2 ? 24 : 0 } : { textAlign: 'center', position: 'relative', zIndex: 1 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: '50%',
                   background: phase.color, color: '#fff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 14, fontWeight: 700, margin: '0 auto 12px',
+                  fontSize: 14, fontWeight: 700, margin: isMobile ? '0' : '0 auto 12px',
                   border: '3px solid #fdf9f2', boxShadow: `0 0 0 2px ${phase.color}`,
+                  flexShrink: 0,
                 }}>
                   {i + 1}
                 </div>
-                <p style={{ fontSize: 12, fontWeight: 700, color: phase.color, marginBottom: 4 }}>{phase.range}</p>
-                <p style={{ fontSize: 14, fontWeight: 600, color: '#1c0e06', marginBottom: 6 }}>{phase.label}</p>
-                <p style={{ fontSize: 13, color: '#9a8b78', lineHeight: 1.4 }}>
-                  {roleData.moves[phase.moveIndex]?.title}
-                </p>
+                <div style={isMobile ? { textAlign: 'left' } : {}}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: phase.color, marginBottom: 4 }}>{phase.range}</p>
+                  <p style={{ fontSize: 14, fontWeight: 600, color: '#1c0e06', marginBottom: 6 }}>{phase.label}</p>
+                  <p style={{ fontSize: 13, color: '#9a8b78', lineHeight: 1.4 }}>
+                    {roleData.moves[phase.moveIndex]?.title}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </motion.div>
 
         <div style={{ textAlign: 'right' }}>
-          <motion.button onClick={onNext}
-            whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }} whileTap={{ scale: 0.98 }}
-            style={{
-              padding: '14px 32px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
-              background: '#1c0e06', color: '#fdf9f2', border: 'none', borderRadius: 12,
-              cursor: 'pointer', letterSpacing: '0.01em',
-            }}>
-            See my clarity summary →
-          </motion.button>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <motion.div
+              style={{ position: 'absolute', inset: -1, borderRadius: 13, pointerEvents: 'none' }}
+              animate={{ boxShadow: ['0 0 0 0 rgba(200,136,26,0)', '0 0 22px 5px rgba(200,136,26,0.28)', '0 0 0 0 rgba(200,136,26,0)'] }}
+              transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 0.8 }}
+            />
+            <motion.button onClick={onNext}
+              whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }} whileTap={{ scale: 0.98 }}
+              style={{
+                padding: '14px 32px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
+                background: '#1c0e06', color: '#fdf9f2', border: 'none', borderRadius: 12,
+                cursor: 'pointer', letterSpacing: '0.01em', position: 'relative',
+              }}>
+              See my clarity summary →
+            </motion.button>
+          </div>
         </div>
       </div>
     </div>

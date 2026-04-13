@@ -7,11 +7,11 @@ import Screen4Moves from './screens/Screen4Moves'
 import Screen5Summary from './screens/Screen5Summary'
 
 const pageVariants = {
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -16 },
+  initial: { opacity: 0, y: 32, scale: 0.98 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  exit: { opacity: 0, y: -20, scale: 1.01 },
 }
-const pageTransition = { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }
+const pageTransition = { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
 
 export default function App() {
   const [screen, setScreen] = useState(1)

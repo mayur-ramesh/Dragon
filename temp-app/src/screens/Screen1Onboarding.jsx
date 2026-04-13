@@ -1,6 +1,16 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { matchRole } from '../data/roleData'
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return isMobile
+}
 
 const INDUSTRIES = ['Fintech', 'Healthcare', 'Logistics', 'Marketing', 'Education', 'Tech', 'Creative & Media']
 
@@ -39,6 +49,34 @@ function BackgroundLines() {
           transition={{ duration: 7 + i * 2, repeat: Infinity, ease: 'easeInOut', delay: i * 1.5 }}
         />
       ))}
+      {[0,1,2,3,4,5,6,7].map((i) => (
+        <motion.div
+          key={`orb-${i}`}
+          style={{
+            position: 'absolute',
+            width: 3 + (i % 3),
+            height: 3 + (i % 3),
+            borderRadius: '50%',
+            background: `rgba(200,136,26,${0.35 + (i % 4) * 0.15})`,
+            left: `${8 + i * 11}%`,
+            bottom: `${5 + (i % 4) * 6}%`,
+            filter: 'blur(0.5px)',
+            boxShadow: '0 0 6px rgba(200,136,26,0.4)',
+          }}
+          animate={{
+            y: [0, -(120 + i * 18)],
+            x: [(i % 2 === 0 ? 0 : 0), (i % 2 === 0 ? 12 : -12), (i % 2 === 0 ? -6 : 6)],
+            opacity: [0, 0.9, 0.6, 0],
+          }}
+          transition={{
+            duration: 5 + i * 0.9,
+            repeat: Infinity,
+            delay: i * 0.65,
+            ease: 'easeOut',
+            times: [0, 0.3, 0.7, 1],
+          }}
+        />
+      ))}
     </div>
   )
 }
@@ -48,6 +86,7 @@ export default function Screen1Onboarding({ onNext }) {
   const [industry, setIndustry] = useState('Fintech')
   const [focused, setFocused] = useState(false)
   const [error, setError] = useState(false)
+  const isMobile = useIsMobile()
 
   const stagger = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }
 
@@ -66,7 +105,7 @@ export default function Screen1Onboarding({ onNext }) {
       alignItems: 'center',
       justifyContent: 'center',
       background: '#fdf9f2',
-      padding: '40px 24px',
+      padding: isMobile ? '32px 16px' : '40px 24px',
     }}>
       <BackgroundLines />
 
@@ -151,7 +190,7 @@ export default function Screen1Onboarding({ onNext }) {
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: 12 }}>
+            <div style={{ display: 'flex', gap: 12, flexDirection: isMobile ? 'column' : 'row' }}>
               <select
                 value={industry}
                 onChange={e => setIndustry(e.target.value)}
@@ -192,28 +231,35 @@ export default function Screen1Onboarding({ onNext }) {
             </div>
           </div>
 
-          <motion.button
-            type="submit"
-            whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }}
-            whileTap={{ scale: 0.98 }}
-            style={{
-              width: '100%',
-              padding: '18px 24px',
-              fontSize: 16,
-              fontFamily: 'Outfit, sans-serif',
-              fontWeight: 600,
-              background: '#1c0e06',
-              color: '#fdf9f2',
-              border: 'none',
-              borderRadius: 12,
-              cursor: 'pointer',
-              letterSpacing: '0.01em',
-              transition: 'background 0.2s ease',
-              marginTop: error ? 24 : 0,
-            }}
-          >
-            Map my week →
-          </motion.button>
+          <div style={{ position: 'relative', marginTop: error ? 24 : 0 }}>
+            <motion.div
+              style={{ position: 'absolute', inset: -1, borderRadius: 13, pointerEvents: 'none' }}
+              animate={{ boxShadow: ['0 0 0 0 rgba(200,136,26,0)', '0 0 22px 5px rgba(200,136,26,0.28)', '0 0 0 0 rgba(200,136,26,0)'] }}
+              transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 0.8, ease: 'easeInOut' }}
+            />
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.02, backgroundColor: '#2e1a0c' }}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                width: '100%',
+                padding: '18px 24px',
+                fontSize: 16,
+                fontFamily: 'Outfit, sans-serif',
+                fontWeight: 600,
+                background: '#1c0e06',
+                color: '#fdf9f2',
+                border: 'none',
+                borderRadius: 12,
+                cursor: 'pointer',
+                letterSpacing: '0.01em',
+                transition: 'background 0.2s ease',
+                position: 'relative',
+              }}
+            >
+              Map my week →
+            </motion.button>
+          </div>
         </motion.form>
 
         {/* Demo shortcuts */}

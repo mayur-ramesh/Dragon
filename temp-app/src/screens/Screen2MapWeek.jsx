@@ -1,9 +1,19 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   DndContext, DragOverlay, useDraggable, useDroppable,
-  PointerSensor, useSensor, useSensors, pointerWithin,
+  PointerSensor, TouchSensor, useSensor, useSensors, pointerWithin,
 } from '@dnd-kit/core'
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
+  return isMobile
+}
 import { roles } from '../data/roleData'
 import StepIndicator from '../components/StepIndicator'
 
@@ -117,7 +127,11 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
   const customCounter = useRef(0)
 
   const allTasks = [...tasks, ...customTasks]
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
+  const isMobile = useIsMobile()
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } })
+  )
   const unsortedTasks = allTasks.filter(t => !frequencies[t.id])
   const sortedCount = Object.keys(frequencies).length
   const minRequired = 8
@@ -169,10 +183,10 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: '24px 32px 40px' }}>
+    <div style={{ minHeight: '100vh', background: '#fdf9f2', padding: isMobile ? '16px 14px 40px' : '24px 32px 40px' }}>
       {/* Top bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: '0 auto 32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: 1200, margin: isMobile ? '0 auto 20px' : '0 auto 32px', flexWrap: 'wrap', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <button onClick={onBack} style={{
             background: 'transparent', border: '1.5px solid #e0d4c0', borderRadius: 10,
             padding: '8px 14px', cursor: 'pointer', fontSize: 14, color: '#6b5f4e',
@@ -183,28 +197,30 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
           </button>
           <StepIndicator current={2} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
             background: '#1c0e06', color: '#fdf9f2',
-            padding: '8px 16px', borderRadius: 100, fontSize: 14, fontWeight: 600,
+            padding: '8px 14px', borderRadius: 100, fontSize: isMobile ? 12 : 14, fontWeight: 600,
           }}>
             {roleData.title}
-            <span style={{ background: 'rgba(255,255,255,0.15)', padding: '2px 8px', borderRadius: 100, fontSize: 12 }}>
-              {roleData.industry}
-            </span>
+            {!isMobile && (
+              <span style={{ background: 'rgba(255,255,255,0.15)', padding: '2px 8px', borderRadius: 100, fontSize: 12 }}>
+                {roleData.industry}
+              </span>
+            )}
           </div>
           <button onClick={demoMode} style={{
             background: 'transparent', border: '1px solid #ddd0bc',
-            borderRadius: 10, padding: '8px 14px', cursor: 'pointer',
-            fontSize: 13, color: '#9a8b78', fontFamily: 'Outfit, sans-serif',
+            borderRadius: 10, padding: '8px 12px', cursor: 'pointer',
+            fontSize: 12, color: '#9a8b78', fontFamily: 'Outfit, sans-serif',
           }}>
-            Demo mode
+            Demo
           </button>
         </div>
       </div>
 
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0' : undefined }}>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: 'center', marginBottom: 40 }}>
           <h2 className="font-display" style={{
             fontSize: 'clamp(26px, 3vw, 38px)', fontWeight: 400, color: '#1c0e06',
@@ -254,8 +270,8 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             style={{
               background: '#fdf9f2', border: '1.5px dashed #ddd0bc',
-              borderRadius: 16, padding: '16px 24px', marginBottom: 24,
-              display: 'flex', alignItems: 'center', gap: 12,
+              borderRadius: 16, padding: isMobile ? '12px 14px' : '16px 24px', marginBottom: 24,
+              display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
             }}
           >
             <span style={{ fontSize: 13, fontWeight: 600, color: '#9a8b78', whiteSpace: 'nowrap' }}>
@@ -304,7 +320,7 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
             </button>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 12 : 20, marginBottom: 28 }}>
             {ZONES.map(zone => (
               <DropZone key={zone.id} zone={zone} tasks={allTasks} frequencies={frequencies} />
             ))}
@@ -315,7 +331,7 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
           </DragOverlay>
         </DndContext>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, gap: 12, flexWrap: 'wrap' }}>
           {unsortedTasks.length > 0 ? (
             <button onClick={quickFill} style={{
               background: 'transparent', border: '1.5px solid #ddd0bc', borderRadius: 12,
@@ -328,22 +344,32 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
             </button>
           ) : <div />}
 
-          <motion.button
-            onClick={handleProceed}
-            disabled={!canProceed}
-            whileHover={canProceed ? { scale: 1.02, backgroundColor: '#2e1a0c' } : {}}
-            whileTap={canProceed ? { scale: 0.98 } : {}}
-            style={{
-              padding: '14px 32px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
-              background: canProceed ? '#1c0e06' : '#d8ccba',
-              color: canProceed ? '#fdf9f2' : '#9a8b78',
-              border: 'none', borderRadius: 12,
-              cursor: canProceed ? 'pointer' : 'not-allowed',
-              transition: 'all 0.2s ease', letterSpacing: '0.01em',
-            }}
-          >
-            Show me the future →
-          </motion.button>
+          <div style={{ position: 'relative' }}>
+            {canProceed && (
+              <motion.div
+                style={{ position: 'absolute', inset: -1, borderRadius: 13, pointerEvents: 'none' }}
+                animate={{ boxShadow: ['0 0 0 0 rgba(200,136,26,0)', '0 0 22px 5px rgba(200,136,26,0.3)', '0 0 0 0 rgba(200,136,26,0)'] }}
+                transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 0.6 }}
+              />
+            )}
+            <motion.button
+              onClick={handleProceed}
+              disabled={!canProceed}
+              whileHover={canProceed ? { scale: 1.02, backgroundColor: '#2e1a0c' } : {}}
+              whileTap={canProceed ? { scale: 0.98 } : {}}
+              style={{
+                padding: '14px 32px', fontSize: 15, fontFamily: 'Outfit, sans-serif', fontWeight: 600,
+                background: canProceed ? '#1c0e06' : '#d8ccba',
+                color: canProceed ? '#fdf9f2' : '#9a8b78',
+                border: 'none', borderRadius: 12,
+                cursor: canProceed ? 'pointer' : 'not-allowed',
+                transition: 'all 0.2s ease', letterSpacing: '0.01em',
+                position: 'relative',
+              }}
+            >
+              Show me the future →
+            </motion.button>
+          </div>
         </div>
       </div>
     </div>
