@@ -223,7 +223,7 @@ export default function Screen4Moves({ roleKey, taskFrequencies, onNext, onBack 
                 background: '#1c0e06', color: '#fdf9f2', border: 'none', borderRadius: 12,
                 cursor: 'pointer', letterSpacing: '0.01em', position: 'relative',
               }}>
-              See my clarity summary →
+              See funding & pricing →
             </motion.button>
           </div>
         </div>

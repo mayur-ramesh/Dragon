@@ -327,7 +327,7 @@ export default function Screen3Dashboard({ roleKey, taskFrequencies, sliderYear,
 
         {/* Three columns */}
         <LayoutGroup>
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 12 : 20, marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 12 : 20, marginBottom: 28, alignItems: 'stretch' }}>
             {COLUMNS.map((col, ci) => {
               const colTasks = getColumnTasks(col.id)
               return (

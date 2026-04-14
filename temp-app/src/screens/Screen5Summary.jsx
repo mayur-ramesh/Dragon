@@ -136,7 +136,7 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
           }}>
             ← Back
           </button>
-          <StepIndicator current={5} />
+          <StepIndicator current={6} />
         </div>
       </div>
 
@@ -230,7 +230,7 @@ export default function Screen5Summary({ roleKey, taskFrequencies, onRestart, on
           </div>
 
           {/* Key stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 12, alignItems: 'stretch' }}>
             {[
               { value: humanCount,      label: 'Highly Human tasks',    sub: 'Irreplaceable right now',     color: '#1e8c5c' },
               { value: augmentedCount,  label: 'Tasks being augmented', sub: 'AI assists, you lead',        color: '#c8881a' },

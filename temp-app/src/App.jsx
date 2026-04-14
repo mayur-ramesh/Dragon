@@ -4,6 +4,7 @@ import Screen1Onboarding from './screens/Screen1Onboarding'
 import Screen2MapWeek from './screens/Screen2MapWeek'
 import Screen3Dashboard from './screens/Screen3Dashboard'
 import Screen4Moves from './screens/Screen4Moves'
+import Screen4bFunding from './screens/Screen4bFunding'
 import Screen5Summary from './screens/Screen5Summary'
 
 const pageVariants = {
@@ -61,12 +62,21 @@ export default function App() {
           </motion.div>
         )}
         {screen === 5 && (
+          <motion.div key="s4b" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition}>
+            <Screen4bFunding
+              roleKey={roleKey}
+              onNext={() => setScreen(6)}
+              onBack={() => setScreen(4)}
+            />
+          </motion.div>
+        )}
+        {screen === 6 && (
           <motion.div key="s5" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition}>
             <Screen5Summary
               roleKey={roleKey}
               taskFrequencies={taskFrequencies}
               onRestart={() => { setScreen(1); setRoleKey(null); setTaskFrequencies({}); setCustomTasks([]); setSliderYear(1) }}
-              onBack={() => setScreen(4)}
+              onBack={() => setScreen(5)}
             />
           </motion.div>
         )}

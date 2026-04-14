@@ -1,4 +1,4 @@
-export default function StepIndicator({ current, total = 5 }) {
+export default function StepIndicator({ current, total = 6 }) {
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
       {Array.from({ length: total }).map((_, i) => {

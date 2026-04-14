@@ -567,6 +567,10 @@ const AUTOMATABLE_TERMS = [
   'filing', 'document management',
   'routine email', 'auto-reply', 'template',
   'notification', 'alert', 'log ',
+  'inventory', 'reconciliation', 'stock ',
+  'track', 'kpi', 'status update',
+  'report generation', 'weekly report', 'monthly report',
+  'daily report', 'operational report', 'seo keyword',
 ]
 
 const HUMAN_TERMS = [
@@ -580,6 +584,11 @@ const HUMAN_TERMS = [
   'judgment', 'advocacy',
   'keynote', 'strategic vision',
   'culture',
+  'stakeholder', 'client ', 'partnership',
+  'interview', 'engagement', 'onboard',
+  'grievanc', 'exception', 'disruption', 'crisis',
+  'present', 'influencer', 'brand activation',
+  'vendor relationship', 'team member', 'pair programming',
 ]
 
 export function classifyCustomTask(taskName) {
@@ -597,4 +606,279 @@ export const CUSTOM_TASK_DETAILS = {
   automatable: "This task involves predictable, rule-based steps — expect AI to handle most of it within 1–2 years.",
   augmented: "AI can do the heavy lifting here, but your expertise and judgment are needed to shape and apply the output.",
   human: "This task relies on relationships, empathy, or contextual wisdom that AI cannot replicate — a core part of your value.",
+}
+
+/* ──────────────────────────────────────────────
+   Job-listing import helpers (prototype / demo)
+   ────────────────────────────────────────────── */
+
+const SAMPLE_JOB_LISTINGS = {
+  // Indeed-style URLs
+  indeed: {
+    'marketing': {
+      title: 'Digital Marketing Executive',
+      industry: 'Marketing',
+      description: `We are looking for a Digital Marketing Executive to join our team.
+
+Responsibilities:
+• Plan and execute digital marketing campaigns across social media, email, and paid channels
+• Create engaging content for Instagram, TikTok, LinkedIn, and Facebook
+• Manage and optimise Google Ads and Meta Ads campaigns
+• Track campaign performance using Google Analytics and generate weekly reports
+• Conduct SEO keyword research and on-page optimisation
+• Coordinate with external agencies and influencers for brand partnerships
+• Manage email marketing campaigns including A/B testing subject lines
+• Monitor competitor activity and market trends
+• Respond to customer enquiries and comments on social media platforms
+• Prepare monthly marketing performance presentations for management
+• Assist in planning and executing events and brand activations
+• Develop and maintain content calendars across all platforms`,
+    },
+    'analyst': {
+      title: 'Business Analyst',
+      industry: 'Fintech',
+      description: `We are seeking a Business Analyst to support our growth team.
+
+Key Responsibilities:
+• Gather and document business requirements from stakeholders across departments
+• Perform data analysis and create dashboards using SQL and Tableau
+• Generate weekly and monthly business performance reports
+• Conduct market research and competitive analysis
+• Prepare presentation decks for leadership meetings
+• Facilitate workshops and requirements-gathering sessions with cross-functional teams
+• Write user stories and acceptance criteria for the product team
+• Manage project documentation and maintain the team wiki
+• Perform UAT testing for new system features before deployment
+• Coordinate with vendors and external partners on system integrations
+• Identify process improvement opportunities and propose solutions
+• Mentor junior team members on analytical tools and frameworks`,
+    },
+    'engineer': {
+      title: 'Software Engineer',
+      industry: 'Tech',
+      description: `We're hiring a Software Engineer to build scalable applications.
+
+Responsibilities:
+• Design and develop backend services using Python and Node.js
+• Write and maintain unit tests and integration tests
+• Participate in code reviews and provide constructive feedback to peers
+• Debug and resolve production issues and customer-reported bugs
+• Write technical documentation for APIs and system architecture
+• Attend daily standups and sprint planning meetings
+• Collaborate with product managers to refine requirements and estimate effort
+• Deploy and monitor applications using CI/CD pipelines
+• Optimise database queries and improve application performance
+• Conduct technical interviews and assess engineering candidates
+• Mentor junior developers through pair programming sessions
+• Present technical decisions and architecture proposals to stakeholders`,
+    },
+    'hr': {
+      title: 'HR Executive',
+      industry: 'Tech',
+      description: `We are looking for an HR Executive to support our People team.
+
+Key Responsibilities:
+• Manage end-to-end recruitment process including job postings, screening, and interviews
+• Process payroll, leave applications, and employee benefits administration
+• Conduct employee onboarding and orientation programmes
+• Handle employee relations issues, grievances, and provide counselling
+• Maintain and update HR information systems and employee records
+• Coordinate training and development programmes for staff
+• Plan and execute employee engagement activities and events
+• Prepare HR reports and analytics for management review
+• Ensure compliance with Singapore Employment Act and MOM regulations
+• Facilitate performance review cycles and manage appraisal documentation
+• Develop and update company policies and employee handbook
+• Manage exit interviews and offboarding processes`,
+    },
+    'default': {
+      title: 'Operations Associate',
+      industry: 'Logistics',
+      description: `We are hiring an Operations Associate for our Singapore office.
+
+Responsibilities:
+• Process and track daily orders through internal management systems
+• Coordinate with warehouse teams to ensure timely order fulfilment
+• Respond to customer enquiries via email and phone
+• Generate daily operational reports and KPI dashboards
+• Manage inventory records and conduct periodic stock reconciliation
+• Liaise with logistics partners and delivery providers
+• Schedule and coordinate team meetings and cross-department syncs
+• Handle data entry and maintain accurate records in the CRM
+• Assist in planning and executing process improvement initiatives
+• Support procurement by obtaining quotes and managing vendor relationships
+• Prepare training materials and onboard new team members
+• Escalate and resolve operational exceptions and service disruptions`,
+    },
+  },
+  // LinkedIn-style URLs
+  linkedin: {
+    'marketing': null,  // will fall through to indeed
+    'analyst': null,
+    'engineer': null,
+    'hr': null,
+    'default': null,
+  },
+}
+
+/**
+ * Given a URL, try to match a sample job listing for demo purposes.
+ * Returns { title, industry, description } or null
+ */
+export function matchSampleFromUrl(url) {
+  const lower = url.toLowerCase()
+  const isIndeed = lower.includes('indeed')
+  const isLinkedIn = lower.includes('linkedin')
+
+  if (!isIndeed && !isLinkedIn) return SAMPLE_JOB_LISTINGS.indeed['default']
+
+  // Try to determine role from URL keywords
+  const urlText = lower.replace(/[^a-z0-9 ]/g, ' ')
+  if (urlText.includes('market') || urlText.includes('social media') || urlText.includes('content'))
+    return SAMPLE_JOB_LISTINGS.indeed['marketing']
+  if (urlText.includes('analyst') || urlText.includes('business') || urlText.includes('finance') || urlText.includes('data'))
+    return SAMPLE_JOB_LISTINGS.indeed['analyst']
+  if (urlText.includes('engineer') || urlText.includes('developer') || urlText.includes('software') || urlText.includes('frontend') || urlText.includes('backend'))
+    return SAMPLE_JOB_LISTINGS.indeed['engineer']
+  if (urlText.includes('hr') || urlText.includes('human resource') || urlText.includes('recruit') || urlText.includes('people'))
+    return SAMPLE_JOB_LISTINGS.indeed['hr']
+
+  return SAMPLE_JOB_LISTINGS.indeed['default']
+}
+
+/**
+ * Parse a raw job description into an array of task strings.
+ */
+function extractTasksFromDescription(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean)
+  const tasks = []
+
+  for (const line of lines) {
+    // Match bullet points (•, -, *, numbered)
+    const cleaned = line.replace(/^[\s•\-\*\d.)\]]+\s*/, '').trim()
+    if (cleaned.length < 8) continue           // skip very short lines
+    if (cleaned.length > 120) continue          // skip paragraph-length lines
+    // Skip section headers
+    if (/^(responsibilities|requirements|qualifications|about|we are|key |main |job )/i.test(cleaned)) continue
+    if (/^(the role|the candidate|the ideal|this is|you will|our team)/i.test(cleaned)) continue
+    // If it looks like a task/responsibility, keep it
+    if (line.match(/^[\s•\-\*\d.)]+/) || cleaned.match(/^(manage|create|develop|coordinate|prepare|conduct|support|assist|handle|maintain|plan|monitor|perform|write|design|build|review|ensure|facilitate|respond|process|track|generate|analyse|analyze|identify|lead|collaborate|implement|configure|research|evaluate|test|deploy|optimize|optimise)/i)) {
+      tasks.push(cleaned)
+    }
+  }
+
+  // Deduplicate
+  const unique = [...new Set(tasks)]
+  return unique.slice(0, 14) // cap at 14 tasks for the prototype
+}
+
+/**
+ * Classify a task and generate an AI impact detail string.
+ */
+function classifyAndDetail(taskName) {
+  const category = classifyCustomTask(taskName)
+  const detail = CUSTOM_TASK_DETAILS[category]
+  return { category, detail }
+}
+
+/**
+ * Parse a job listing (text) and return a full role object
+ * compatible with the `roles` data structure.
+ */
+export function parseJobListing(title, industry, description) {
+  const rawTasks = extractTasksFromDescription(description)
+  if (rawTasks.length === 0) return null
+
+  const taskPool = rawTasks.map((name, i) => ({
+    id: `jl-${i + 1}`,
+    name,
+    defaultFrequency: i < 4 ? 'daily' : i < 9 ? 'weekly' : 'rarely',
+  }))
+
+  const year1 = { automatable: [], augmented: [], human: [] }
+  const year5 = { automatable: [], augmented: [], human: [] }
+
+  for (const task of taskPool) {
+    const { category, detail } = classifyAndDetail(task.name)
+    year1[category].push({ id: task.id, detail })
+  }
+
+  // Year5: shift some augmented to automatable
+  for (const task of taskPool) {
+    const { category, detail } = classifyAndDetail(task.name)
+    if (category === 'augmented' && year5.automatable.length < 4) {
+      year5.automatable.push({ id: task.id, detail: 'Fully automated after 5 years of AI advancement.' })
+    } else if (category === 'automatable') {
+      year5.automatable.push({ id: task.id, detail: 'Fully automated with near-zero human input required.' })
+    } else if (category === 'augmented') {
+      year5.augmented.push({ id: task.id, detail })
+    } else {
+      year5.human.push({ id: task.id, detail: 'Even more critical as routine work disappears — this IS the job.' })
+    }
+  }
+
+  const humanPct = Math.round((year1.human.length / taskPool.length) * 100)
+  const clarityScore = Math.min(95, Math.max(45, 40 + humanPct + year1.augmented.length * 3))
+
+  // Generate 3 moves from the human/augmented tasks
+  const humanTasks = taskPool.filter(t => classifyCustomTask(t.name) === 'human')
+  const augTasks = taskPool.filter(t => classifyCustomTask(t.name) === 'augmented')
+  const moveSources = [...humanTasks, ...augTasks].slice(0, 3)
+
+  const moveTemplates = [
+    { number: '01', prefix: 'Own and deepen your expertise in', why: 'As AI handles routine work, this task becomes your most defensible asset. Invest in making it your signature strength.' },
+    { number: '02', prefix: 'Become the go-to person for', why: 'AI will augment this task — meaning someone still needs to direct, validate, and apply the output. Be that person.' },
+    { number: '03', prefix: 'Build strategic depth around', why: 'This task requires judgment, relationships, or creativity that AI cannot replicate. It defines the future shape of your role.' },
+  ]
+
+  const moves = moveSources.map((task, i) => ({
+    number: moveTemplates[i]?.number || `0${i + 1}`,
+    title: `${moveTemplates[i]?.prefix || 'Focus on'} ${task.name.toLowerCase()}`,
+    why: moveTemplates[i]?.why || 'This task represents a key area where your human skills create irreplaceable value.',
+    linkedTaskId: task.id,
+    linkedTaskName: task.name,
+    course: {
+      name: 'AI & Digital Skills for Professionals',
+      provider: 'SkillsFuture Singapore',
+      duration: '4–8 weeks · Part-time',
+      skillsFuture: true,
+    },
+  }))
+
+  // Pad moves if fewer than 3
+  while (moves.length < 3) {
+    moves.push({
+      number: `0${moves.length + 1}`,
+      title: 'Build your strategic communication skills',
+      why: 'As AI handles execution, the ability to communicate decisions, persuade stakeholders, and lead becomes your core value.',
+      linkedTaskId: taskPool[0]?.id || 'jl-1',
+      linkedTaskName: taskPool[0]?.name || 'General',
+      course: { name: 'Business Communication with AI', provider: 'SMU Academy', duration: '4 weeks · Online', skillsFuture: true },
+    })
+  }
+
+  const roleObj = {
+    title: title || 'Custom Role',
+    industry: industry || 'General',
+    taskPool,
+    aiAnalysis: { year1, year5 },
+    moves,
+    clarityScore,
+    summaryInsight: `${year1.augmented.length} of your tasks will be augmented within 2 years — but your ${year1.human.length} highly-human tasks become more valuable, not less.`,
+  }
+
+  return roleObj
+}
+
+let dynamicRoleCounter = 0
+
+/**
+ * Register a parsed role into the global `roles` object.
+ * Returns the generated role key.
+ */
+export function addDynamicRole(roleObj) {
+  dynamicRoleCounter++
+  const key = `dynamic-${dynamicRoleCounter}`
+  roles[key] = roleObj
+  return key
 }

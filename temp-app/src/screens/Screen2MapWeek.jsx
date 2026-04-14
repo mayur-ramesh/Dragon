@@ -30,7 +30,7 @@ function TaskPill({ task, isDragging = false, isOverlay = false }) {
       background: isDragging ? '#1c0e06' : '#fff',
       color: isDragging ? '#fdf9f2' : '#1e1510',
       border: `1.5px solid ${isDragging ? '#1c0e06' : '#e0d4c0'}`,
-      borderRadius: 100,
+      borderRadius: 12,
       fontSize: 14,
       fontWeight: 500,
       fontFamily: 'Outfit, sans-serif',
@@ -39,7 +39,8 @@ function TaskPill({ task, isDragging = false, isOverlay = false }) {
       boxShadow: isDragging || isOverlay ? '0 8px 24px rgba(28,14,6,0.2)' : '0 1px 3px rgba(0,0,0,0.06)',
       transform: isDragging ? 'scale(1.06)' : 'scale(1)',
       transition: isOverlay ? 'none' : 'all 0.2s ease',
-      whiteSpace: 'nowrap',
+      lineHeight: 1.4,
+      wordBreak: 'break-word',
     }}>
       {task.name}
     </div>
@@ -63,7 +64,9 @@ function DropZone({ zone, tasks, frequencies }) {
     <div
       ref={setNodeRef}
       style={{
-        flex: 1,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         minHeight: 220,
         borderRadius: 16,
         border: `2px dashed ${isOver ? zone.color : '#ddd0bc'}`,
@@ -71,6 +74,7 @@ function DropZone({ zone, tasks, frequencies }) {
         padding: 20,
         transition: 'all 0.2s ease',
         transform: isOver ? 'scale(1.01)' : 'scale(1)',
+        boxSizing: 'border-box',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
@@ -88,7 +92,7 @@ function DropZone({ zone, tasks, frequencies }) {
         )}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minHeight: 60 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minHeight: 60, flex: 1 }}>
         <AnimatePresence>
           {tasksInZone.map(task => (
             <motion.div
@@ -320,7 +324,7 @@ export default function Screen2MapWeek({ roleKey, onNext, onBack }) {
             </button>
           </motion.div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 12 : 20, marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: isMobile ? 12 : 20, marginBottom: 28, alignItems: 'stretch' }}>
             {ZONES.map(zone => (
               <DropZone key={zone.id} zone={zone} tasks={allTasks} frequencies={frequencies} />
             ))}
